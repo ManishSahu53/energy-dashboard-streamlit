@@ -1,4 +1,4 @@
-from datetime import datetime 
+import datetime 
 from dataclasses import dataclass, field
 
 @dataclass
@@ -19,6 +19,12 @@ class Config:
         'Wind',
     ]
 
+    path_nuclear_csv = 'data/nuclear_data/nuclear_data.csv'
+    path_energy_csv = 'data/energy_data/energy_data.csv'
+    
+
+    rules_cols = ['Daily Recovery', 'Daily New Cases', 'Daily Deaths', 'Daily Test', 'Daily Active Cases']
+    
     # RULE_MAP = {
     #     'Total': 'total',
     #     'Data per 10,00,000': 'percentage',

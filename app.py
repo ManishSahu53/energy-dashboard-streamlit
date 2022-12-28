@@ -34,10 +34,10 @@ LINE = """<style>
 <div class="vl"></div>"""
 
 
-
+params = config.Config()
 # Calculating Yesterday date
 current_date = datetime.datetime.now(
-    config.tzinfo) - datetime.timedelta(1, minutes=0, hours=12)
+    params.tzinfo) - datetime.timedelta(1, minutes=0, hours=12)
 
 logging.info(f'Processing for Date: {current_date}')
 
@@ -49,7 +49,7 @@ col3.write("**[Linkedin](https://www.linkedin.com/in/manishsahuiitbhu/)<br>[:bee
 options = ['Infection', 'Vaccines']
 
 what = col1.radio('Type of Data', options)
-area = col2.selectbox("Region", list(config.POPULATION_MAP.keys()))
+area = col2.selectbox("Region", list(['India', 'USA', 'Germany']))
 
 st.header('Real time data updated till {}'.format(
     current_date.strftime('%Y-%m-%d')))
@@ -58,8 +58,9 @@ col1, line, col3, col4, col5, col6, col7, col8 = st.columns(
     [10, 1, 8, 8, 8, 8, 8, 8])
 line.markdown(LINE, unsafe_allow_html=True)
 
-nuclear_dataloader = dataloader.NuclearDataLoader()
-energy_dataloader = dataloader.EnergyDataLoader()
+nuclear_dataloader = dataloader.NuclearDataLoader(path_csv=params.path_nuclear_csv)
+energy_dataloader = dataloader.EnergyDataLoader(path_csv=params.path_energy_csv)
+
 data_nuclear = nuclear_dataloader.load_dataset()
 data_energy = energy_dataloader.load_dataset()
 
@@ -73,7 +74,7 @@ else:
     cols = energy_dataloader.cols
 
 with col1:
-    rule = st.radio('', list(config.RULE_MAP.keys()))
+    rule = st.radio('', list(['r1', 'r2', 'r3']))
     st.write('')
     log = st.checkbox('Log Scale', False)
 
@@ -210,7 +211,7 @@ fig.update_layout(legend=dict(bgcolor='rgba(0,0,0,0)'),
 st.plotly_chart(fig, use_container_width=True)
 
 ########################### Third Chart #################################
-rule = st.selectbox('Variables', ['Daily Recovery', 'Daily New Cases', 'Daily Deaths', 'Daily Test', 'Daily Active Cases'])
+rule = st.selectbox('Variables', params.rules_cols)
 
 # st.plotly_chart(custom_plot.summary(
 #     data_state_cls.data, rule), use_container_width=True)
