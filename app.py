@@ -15,24 +15,24 @@ import plotly.express as px
 import matplotlib.pyplot as plt
 import streamlit as st
 
-st.set_page_config(page_title='Nuclear Powerplants',
+st.set_page_config(page_title='Powerplant Analysis',
                    page_icon=":chart_with_upwards_trend:",
                    layout='wide', initial_sidebar_state='collapsed')
 
-st.title('Nuclear Powerplants', )
+st.title('Powerplant Statistics', )
+
 
 LINE = """<style>
-.vl {
-  border-left: 2px solid black;
-  height: 100px;
-  position: absolute;
-  left: 50%;
-  margin-left: -3px;
-  top: 0;
-}
-</style>
-<div class="vl"></div>"""
-
+        .vl {
+        border-left: 2px solid black;
+        height: 100px;
+        position: absolute;
+        left: 50%;
+        margin-left: -3px;
+        top: 0;
+        }
+    </style>
+    <div class="vl"></div>"""
 
 params = config.Config()
 # Calculating Yesterday date
@@ -41,22 +41,15 @@ current_date = datetime.datetime.now(
 
 logging.info(f'Processing for Date: {current_date}')
 
-col1, col2, col3, col4 = st.columns([2, 2, 2, 2, ])
+row1_col1, row1_col2, row1_col3, row1_col4, row1_col5 = st.columns([4, 10, 10, 10, 2, ])
 query_params = st.experimental_get_query_params()
 
-col3.write("**[Linkedin](https://www.linkedin.com/in/manishsahuiitbhu/)<br>[:beer:]**",
+row1_col5.write("**[Linkedin](https://www.linkedin.com/in/manishsahuiitbhu/):beer:**",
            unsafe_allow_html=True)
-options = ['Infection', 'Vaccines']
 
-what = col1.radio('Type of Data', options)
-area = col2.selectbox("Region", list(['India', 'USA', 'Germany']))
-
-st.header('Real time data updated till {}'.format(
-    current_date.strftime('%Y-%m-%d')))
-
-col1, line, col3, col4, col5, col6, col7, col8 = st.columns(
-    [10, 1, 8, 8, 8, 8, 8, 8])
-line.markdown(LINE, unsafe_allow_html=True)
+# event_options = ['Energy', 'Nuclear Accidents']
+# event_options_value = col1.radio('Type of Events', event_options)
+event_options_value  = 'Energy'
 
 nuclear_dataloader = dataloader.NuclearDataLoader(path_csv=params.path_nuclear_csv)
 energy_dataloader = dataloader.EnergyDataLoader(path_csv=params.path_energy_csv)
@@ -64,161 +57,126 @@ energy_dataloader = dataloader.EnergyDataLoader(path_csv=params.path_energy_csv)
 data_nuclear = nuclear_dataloader.load_dataset()
 data_energy = energy_dataloader.load_dataset()
 
-# Loading Full india or State wise
-if area == 'nuclear':
-    data = data_nuclear
-    cols = nuclear_dataloader.cols
+
+if event_options_value == 'Nuclear Accidents':
+    pass
 
 else:
-    data = data_energy
-    cols = energy_dataloader.cols
+    default_index = 3
+    energy_type = row1_col4.selectbox("Filter by Energy Types", params.ENERGY_TYPES, index=default_index)
 
-with col1:
-    rule = st.radio('', list(['r1', 'r2', 'r3']))
-    st.write('')
-    log = st.checkbox('Log Scale', False)
+    ############################ Frist Chart #################################
 
-# Daily Confirmed Cases
-with col3:
-    st.markdown("<h3 style='text-align: center;'>Daily Cases</h2>",
-                unsafe_allow_html=True)
+    # with row1_col1:
+    #     text_col1 = f'Nuclear Capacity (GW)'
+    #     st.markdown(f"<h3 style='text-align: center;'>{text_col1}</h3>",
+    #                 unsafe_allow_html=True)
 
-    value = 0
-    text = f''
-    st.markdown(
-        f"<h2 style='text-align: center; color: red;'>{text}</h1>", unsafe_allow_html=True)
+    #     ## Here Nuclear Energy
+    #     default_energy_type = params.ENERGY_TYPES[default_index]
+    #     default_energy_value = energy_dataloader.get_specific_energy_capacity(energy_type=default_energy_type)
 
-# Daily Deaths
-with col4:
-    st.markdown("<h3 style='text-align: center;'>Daily Deceased</h2>",
-                unsafe_allow_html=True)
+    #     value = int(default_energy_value/1000) # For GW
+    #     st.markdown(
+    #         f"<h3 style='text-align: center; color: blue;'>{value}</h3>", unsafe_allow_html=True)
 
-    value = 0
-    text = f''
-    st.markdown(
-        f"<h2 style='text-align: center; color: red;'>{text}</h1>", unsafe_allow_html=True)
 
-# Daily Recovered
-with col5:
-    st.markdown("<h3 style='text-align: center;'>Daily Recovery</h2>",
-                unsafe_allow_html=True)
+    ############################ Second Chart #################################
 
-    value = 0
-    text = f''
-    st.markdown(
-        f"<h2 style='text-align: center; color: red;'>{text}</h1>", unsafe_allow_html=True)
+    row2_col1, row2_line, row2_col2, row2_col3 = st.columns([4, 2, 20, 2])
 
-# Daily Tested
-with col6:
-    st.markdown("<h3 style='text-align: center;'>Daily Tests</h2>",
-                unsafe_allow_html=True)
+    with st.container():
+        # row2_line.markdown(LINE, unsafe_allow_html=True)
 
-    value = 0
-    text = f''
-    st.markdown(
-        f"<h2 style='text-align: center; color: red;'>{text}</h1>", unsafe_allow_html=True)
+        with row2_col1:
+            text_row2_col1 = f'Installed Capacity by Fuel Source'
+            st.markdown(f"<h3 style='text-align: left;'>{text_row2_col1}</h3>",
+                        unsafe_allow_html=True)
 
-# Total Recovered
-with col7:
-    st.markdown("<h3 style='text-align: center;'>Total Recovered</h2>",
-                unsafe_allow_html=True)
+        with row2_col2:
+            energy_capacity_fuel_wise = energy_dataloader.get_energy_capacity_fuel_wise()
+
+            fig = px.bar(energy_capacity_fuel_wise, x='primary_fuel', y='capacity_mw', height=300, )
+            st.plotly_chart(fig, theme="streamlit", use_container_width=True)
+            # st.bar_chart(energy_capacity_fuel_wise, use_container_width=True)
+
+
+    ############################ Third Chart #################################
+
+
+    row2_col1, row2_line, row2_col2, row2_col3 = st.columns([4, 2, 20, 2])
+
+    with st.container():
+        # row2_line.markdown(LINE, unsafe_allow_html=True)
+
+        with row2_col1:
+            text_row2_col1 = f'Average Plant Size (MW)'
+            st.markdown(f"<h3 style='text-align: left;'>{text_row2_col1}</h3>",
+                        unsafe_allow_html=True)
+
+
+        with row2_col2:
+            avg_power_plant_Size_fuel_wise = energy_dataloader.get_average_plant_size_fuel_size()
+
+            fig = px.bar(avg_power_plant_Size_fuel_wise, x='primary_fuel', y='capacity_mw', height=300,)
+            st.plotly_chart(fig, theme="streamlit", use_container_width=True)
+            # st.bar_chart(energy_capacity_fuel_wise, use_container_width=True)
+
+
+     ############################ Fourth Chart #################################
+
+    row3_col1, row2_line, row3_col2, row3_col3 = st.columns([4, 2, 20, 2])
+ 
+    with st.container():
+        # row2_line.markdown(LINE, unsafe_allow_html=True)
+
+        with row3_col1:
+            text_row2_col1 = f'Installed Capacity in Top 10 Countries in ({energy_type})'
+            st.markdown(f"<h3 style='text-align: left;'>{text_row2_col1}</h3>",
+                        unsafe_allow_html=True)
+
+            value = int(energy_dataloader.get_specific_energy_capacity(energy_type=energy_type)/1000) # For GW
+            st.markdown(
+                f"<h3 style='text-align: left; color: blue;'>{value} GW</h3>", unsafe_allow_html=True)
+
+
+        with row3_col2:
+            top_12_country_capacity = energy_dataloader.get_top_12_country_energy_capacity_fuel_wise(energy_type=energy_type)
+            fig = px.bar(top_12_country_capacity, x='country_long', y='capacity_mw', height=300, )
+            st.plotly_chart(fig, theme="streamlit", use_container_width=True)
+
+            # st.bar_chart(top_12_country_capacity, use_container_width=True)
+
+
+    ############################ Fifth Chart #################################
+    tab1, _ = st.tabs(["GeoSpatial Map", "."])
+    px.set_mapbox_access_token(params.MAPBOX_TOKEN)
+
+    with st.container():
+        fig = px.scatter_mapbox(data_energy, 
+                                lat="latitude", lon="longitude", 
+                                color="primary_fuel", size="map_size",
+                                color_discrete_sequence=px.colors.qualitative.G10_r,
+                                # color_continuous_scale=px.colors.sequential.Jet, 
+                                size_max=25, zoom=2,
+                                hover_data=['name', 'capacity_mw', 'primary_fuel'],
+                                height=700)
+        # fig.show()
+        with tab1:
+            # Use the Streamlit theme.
+            # This is the default. So you can also omit the theme argument.
+            st.plotly_chart(fig, theme="streamlit", use_container_width=True)
+
     
-    value = 0 
-    text = f''
-    st.markdown(
-        f"<h2 style='text-align: center; color: red;'>{text}</h1>", unsafe_allow_html=True)
 
-coln, _, _, _, _, _, _ = st.columns([8, 4, 8, 8, 8, 8, 8])
-type_of_timeseries = coln.selectbox(
-    "", ['Daily Cases', 'Daily Recoveries', 'Daily Deaths', 'Daily Tests', 'Positivity Rate'])
-
-
-y = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-x = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-fig2 = px.line(y=y,
-                x=x,
-                title='Daily Statistics',
-                labels={'y': type_of_timeseries,
-                        'x': 'Time Period'},
-                line_shape='spline',
-                )
-
-fig2.add_vline(x='2020-09-16',
-                line_width=1,
-                line_dash="dash",
-                line_color="Orange")
-
-fig2.add_vline(x='2021-02-18',
-                line_width=1,
-                line_dash="dash",
-                line_color="Red")
-
-fig2.add_hline(y=5,
-                line_width=1,
-                line_dash="dash",
-                line_color="Green",
-                annotation_text="Required Positivity Rate",
-                annotation_position="bottom left",
-                )
-
-fig2.update_layout(legend=dict(
-    orientation="h",
-    yanchor="bottom",
-    y=1.02,
-    xanchor="right",
-    x=1
-),
-    xaxis_fixedrange=True,
-    yaxis_fixedrange=True,
-    dragmode=False,
-    plot_bgcolor="white"
-)
-
-st.plotly_chart(fig2, use_container_width=True)
-
-########################### Second Chart #################################
-fig = px.area(y=y,
-              x=x,
-              title='Overall India Growth Rate of Active Cases (7 Day Moving Average)',
-              labels={'y': '% Growth Active Case',
-                     'x': 'Time Period'},
-              line_shape='spline',
-            )
-
-fig.add_hline(y=0,
-                line_width=1,
-                line_dash="dash",
-                line_color="Green",
-                annotation_text="Recovery > Cases",
-                annotation_position="bottom left",
-                )
-
-fig.add_vline(x='2020-09-16',
-                line_width=1,
-                line_dash="dash",
-                line_color="Orange")
-
-fig.add_vline(x='2021-02-18',
-                line_width=1,
-                line_dash="dash",
-                line_color="Red")
-
-fig.update_layout(legend=dict(bgcolor='rgba(0,0,0,0)'),
-                    xaxis_fixedrange=True,
-                    yaxis_fixedrange=True,
-                    dragmode=False,
-                    plot_bgcolor="white",)
-st.plotly_chart(fig, use_container_width=True)
-
-########################### Third Chart #################################
-rule = st.selectbox('Variables', params.rules_cols)
+# rule = st.selectbox('Variables', params.rules_cols)
 
 # st.plotly_chart(custom_plot.summary(
 #     data_state_cls.data, rule), use_container_width=True)
 
-st.write("**:beer: Buy me a [beer]**")
-expander = st.beta_expander("This app is developed by Manish Sahu.")
+# st.write("**:beer: Buy me a [beer]**")
+expander = st.expander("This app is developed by Gunjan Indauliya.")
 expander.write(
-    "Contact me on [Linkedin](https://www.linkedin.com/in/manishsahuiitbhu/)")
+    "Contact me on [Linkedin](https://www.linkedin.com/in/gunjan-indauliya/)")
 expander.write(
     "The source code is on [GitHub](https://github.com/ManishSahu53/streamlit-covid-dashboard)")

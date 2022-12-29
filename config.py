@@ -14,7 +14,6 @@ class Config:
         'Hydro',
         'Nuclear',
         'Solar',
-        'Waste',
         'Wave and Tidal',
         'Wind',
     ]
@@ -25,6 +24,8 @@ class Config:
 
     rules_cols = ['Daily Recovery', 'Daily New Cases', 'Daily Deaths', 'Daily Test', 'Daily Active Cases']
     
+    MAPBOX_TOKEN = 'pk.eyJ1IjoibWFuaXNoc2FodTUzc2FodSIsImEiOiJjbGM2am51ZDMwd3U2M3ZwNmR6dTQ1MDVpIn0.FT-qhWiG132oOfezigPMOQ'
+
     # RULE_MAP = {
     #     'Total': 'total',
     #     'Data per 10,00,000': 'percentage',
