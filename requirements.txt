@@ -61,3 +61,4 @@ pandas
 plotly
 matplotlib
 streamlit
+certifi
