@@ -1,18 +1,14 @@
 # To make things easier later, we're also importing numpy and pandas for
 # working with sample data.
 import datetime
-import traceback
 import logging
 
 import config
 from src import util
 from src import dataloader
 
-import numpy as np
-import pandas as pd
 
 import plotly.express as px
-import matplotlib.pyplot as plt
 import streamlit as st
 
 st.set_page_config(page_title='Powerplant Analysis',
