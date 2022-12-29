@@ -56,3 +56,8 @@ validators==0.20.0
 watchdog==2.2.0
 zipp==3.11.0
 nbformat==5.7.1
+numpy
+pandas
+plotly
+matplotlib
+streamlit
