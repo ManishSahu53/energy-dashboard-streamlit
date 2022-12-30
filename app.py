@@ -40,7 +40,7 @@ logging.info(f'Processing for Date: {current_date}')
 row1_col1, row1_col2, row1_col3, row1_col4, row1_col5 = st.columns([4, 10, 10, 10, 2, ])
 query_params = st.experimental_get_query_params()
 
-row1_col5.write("**[Linkedin](https://www.linkedin.com/in/manishsahuiitbhu/):beer:**",
+row1_col5.write("**[Linkedin](https://www.linkedin.com/in/gunjan-indauliya/):beer:**",
            unsafe_allow_html=True)
 
 # event_options = ['Energy', 'Nuclear Accidents']
@@ -175,4 +175,4 @@ expander = st.expander("This app is developed by Gunjan Indauliya.")
 expander.write(
     "Contact me on [Linkedin](https://www.linkedin.com/in/gunjan-indauliya/)")
 expander.write(
-    "The source code is on [GitHub](https://github.com/ManishSahu53/streamlit-covid-dashboard)")
+    "The source code is on [GitHub](https://github.com/ManishSahu53/energy-dashboard-streamlit)")
